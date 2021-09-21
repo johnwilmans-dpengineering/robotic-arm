@@ -26,6 +26,8 @@ import spidev
 import RPi.GPIO as GPIO
 from pidev.stepper import stepper
 from Slush.Devices import L6470Registers
+from kivy.core.window import Window
+Window.fullscreen = True
 
 
 # kivy starting stuff
