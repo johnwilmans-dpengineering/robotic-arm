@@ -38,33 +38,23 @@ MAIN_SCREEN_NAME = 'main'
 
 spi = spidev.SpiDev()
 
-def magon(status): # turns magnet on or off
-    if status:
-        cyprus.set_servo_position(1, 1)
+def up(status): # turns magnet on or off
+    if not status:
+        cyprus.set_pwm_values(1, period_value=100000, compare_value=50000, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
 
     else:
-        cyprus.set_servo_position(1, 0.5)
+        cyprus.set_pwm_values(1, period_value=100000, compare_value=0,
+                              compare_mode=cyprus.LESS_THAN_OR_EQUAL)  # Motor OFF
 
-    def up(status):  # turns magnet on or off
-        if status:
-            cyprus.set_servo_position(2, 1)
 
-        else:
-            cyprus.set_servo_position(1, 0.5)
 
-def up(status): # turns magnet on or off
+def magon(status): # turns magnet on or off
     if status:
         cyprus.set_servo_position(2, 1)
 
     else:
         cyprus.set_servo_position(2, 0.5)
 
-    def up(status):  # turns magnet on or off
-        if status:
-            cyprus.set_servo_position(2, 1)
-
-        else:
-            cyprus.set_servo_position(1, 0.5)
 
 s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
                      steps_per_unit=200, speed=8)
@@ -109,7 +99,7 @@ class MainScreen(Screen):
 
         else:
             self.magnet_button.text = "magnet on"
-            self.magstat = False
+            self.magstat = True
 
 
     def updown(self):
