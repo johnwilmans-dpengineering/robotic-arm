@@ -40,17 +40,17 @@ spi = spidev.SpiDev()
 
 def magon(status): # turns magnet on or off
     if status:
-        cyprus.set_servo_position(2, 1)
+        cyprus.set_servo_position(1, 1)
 
     else:
-        cyprus.set_servo_position(2, 0.5)
+        cyprus.set_servo_position(1, 0.5)
 s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
                      steps_per_unit=200, speed=8)
 class MainScreen(Screen):
 
     magstat = False #status of the magnet
     opfreeze = False
-
+    upstat = True
     """
     Class to handle the main screen and its associated touch events
     """
@@ -62,8 +62,7 @@ class MainScreen(Screen):
         cyprus.setup_servo(2)  # sets up P5 on the RPiMIB as a RC servo motor controller style output
 
 
-        # s0.relative_move(-10)
-        # s0.relative_move(10)
+
         s0.go_until_press(0, 6400)
         s0.set_as_home()
 
@@ -77,20 +76,31 @@ class MainScreen(Screen):
             if not self.opfreeze:
 
                 magon(self.magstat)
+                up(self.upstat)
 
 
 
 
 
     def magnet(self):
-        if self.magnete_button.text == "magnet on":
-            self.magnet_button.text == "magnet off"
+        if self.magnet_button.text == "magnet on":
+            self.magnet_button.text = "magnet off"
+            self.magstat = False
 
         else:
-            self.magnet_button.text == "magnet on"
+            self.magnet_button.text = "magnet on"
+            self.magstat = False
+            cyprus.set_servo_position(2, 1)
 
+    def upbtn(self):
+        self.upstat = not self.upstat
+        if self.upstat:
+            self.upbtn.text = "Up"
+        else:
+            self.upbtn.text = "Down"
 
     def shutdown(self):
+        magon(False)
         s0.free_all()
         spi.close()
         cyprus.close()

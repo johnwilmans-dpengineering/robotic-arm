@@ -4,7 +4,7 @@
     on_enter: root.start()
 
     magnet_button: magnet_button
-
+    upbtn: upbtn
     FloatLayout:
         size_hint: 1, 1
 
@@ -21,10 +21,19 @@
 
     DPEAButton:
         id: magnet_button
-        text: "magnet on"
-        size: 200, 200
+        text: "magnet off"
+        size: 150, 150
         x: 100
-        y: 1000
+        y: 800
         color: 1, 0, 0, 1
         on_press: root.magnet()
+
+    DPEAButton:
+        id: upbtn
+        text: "Up"
+        size: 150, 150
+        x: 400
+        y: 800
+        color: 1, 0, 0, 1
+        on_press: root.upbtn()
 
