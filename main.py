@@ -28,6 +28,7 @@ from pidev.stepper import stepper
 from Slush.Devices import L6470Registers
 from kivy.core.window import Window
 Window.fullscreen = True
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 
 
 # kivy starting stuff
@@ -43,7 +44,8 @@ def magon(status): # turns magnet on or off
 
     else:
         cyprus.set_servo_position(2, 0.5)
-
+s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
+                     steps_per_unit=200, speed=8)
 class MainScreen(Screen):
 
     magstat = False #status of the magnet
@@ -53,11 +55,18 @@ class MainScreen(Screen):
     Class to handle the main screen and its associated touch events
     """
     def start(self):
-        print("starting")
+        print("******************************************starting******************************************************")
 
         cyprus.initialize()
         cyprus.setup_servo(1)  # sets up P4 on the RPiMIB as a RC servo style output
         cyprus.setup_servo(2)  # sets up P5 on the RPiMIB as a RC servo motor controller style output
+
+
+        # s0.relative_move(-10)
+        # s0.relative_move(10)
+        s0.go_until_press(0, 6400)
+        s0.set_as_home()
+
 
         Thread(target=self.operation_thread).start()
 
@@ -65,7 +74,7 @@ class MainScreen(Screen):
 
         while True:
             sleep(.01)
-            if !(self.opfreeze):
+            if not self.opfreeze:
 
                 magon(self.magstat)
 
