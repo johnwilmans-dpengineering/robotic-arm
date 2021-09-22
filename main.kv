@@ -1,23 +1,28 @@
 <MainScreen>:
 
     name: 'main'
+    on_enter: root.start()
+
+    magnet_button: magnet_button
+
     FloatLayout:
         size_hint: 1, 1
 
     DPEAButton:
         id: test_button
-        text: 'test'
+        text: 'shudown'
         size: 100, 100
-        x: root.width * 0.75
-        y: root.height * 0.5
+        x: 1880
+        y: 20
         color: 0, 1, 0, 1
-        on_press: root.pressed()
+        on_press: root.shutdown()
 
     DPEAButton:
-        text: "test2"
-        size: 100, 100
-        x: root.width * 0.25
-        y: root.height * 0.5
+        id: magnet_button
+        text: "magnet on"
+        size: 200, 200
+        x: 40
+        y: 1000
         color: 1, 0, 0, 1
-        on_press: root.pressed()
+        on_press: root.magnet()
 

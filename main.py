@@ -37,17 +37,57 @@ MAIN_SCREEN_NAME = 'main'
 
 spi = spidev.SpiDev()
 
+def magon(status): # turns magnet on or off
+    if status:
+        cyprus.set_servo_position(2, 1)
+
+    else:
+        cyprus.set_servo_position(2, 0.5)
+
 class MainScreen(Screen):
+
+    magstat = False #status of the magnet
+    opfreeze = False
+
     """
     Class to handle the main screen and its associated touch events
     """
+    def start(self):
+        print("starting")
 
-    def pressed(self):
-        """
-        Function called on button touch event for button with id: testButton
-        :return: None
-        """
-        print("Callback from MainScreen.pressed()")
+        cyprus.initialize()
+        cyprus.setup_servo(1)  # sets up P4 on the RPiMIB as a RC servo style output
+        cyprus.setup_servo(2)  # sets up P5 on the RPiMIB as a RC servo motor controller style output
+
+        Thread(target=self.operation_thread).start()
+
+    def operation_thread(self):
+
+        while True:
+            sleep(.01)
+            if !(self.opfreeze):
+
+                magon(self.magstat)
+
+
+
+
+
+    def magnet(self):
+        if self.magnete_button.text == "magnet on":
+            self.magnet_button.text == "magnet off"
+
+        else:
+            self.magnet_button.text == "magnet on"
+
+
+    def shutdown(self):
+        s0.free_all()
+        spi.close()
+        cyprus.close()
+        GPIO.cleanup()
+
+        sapdhfasoiudsaoiudyfosahdfcoiudsagfoiudsahf()
 
 
 class ProjectNameGUI(App):
