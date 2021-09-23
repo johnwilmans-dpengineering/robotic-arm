@@ -62,7 +62,7 @@ class MainScreen(Screen):
 
     magstat = False #status of the magnet
     opfreeze = False
-    upstat = True
+    ifup = True
     position = 1
     """
     Class to handle the main screen and its associated touch events
@@ -78,20 +78,23 @@ class MainScreen(Screen):
         print("homing")
         s0.go_until_press(0, 6400)
         s0.set_as_home()
-        s0.relative_move(.5)
+
         sleep(3)
 
         Thread(target=self.operation_thread).start()
 
 
     def operation_thread(self):
+        s0.relative_move(1)
 
         while True:
             sleep(.01)
+            self.position = s0.get_position()
+            self.pos_label.text = str(self.position)
             if not self.opfreeze:
 
                 magon(self.magstat)
-                up(self.upstat)
+                up(self.ifup)
 
                 if self.leftbtn.state == "down":
                     s0.go_until_press(0, 2000)
@@ -100,7 +103,56 @@ class MainScreen(Screen):
                 else:
                     s0.softStop()
 
+            else:
+                sleep(.5)
 
+    def autobeepboop(self):
+        self.opfreeze = True
+        print("beepboop")
+
+        if not (cyprus.read_gpio() & 0b0001) == 1:  # binary bitwise AND of the value returned from read.gpio()
+
+            up(True)
+            s0.goTo(7394)
+            up(False)
+            sleep(3)
+            magon((True))
+            up(True)
+            sleep(2)
+            s0.goTo(9350)
+            sleep(1.5)
+            up(False)
+            sleep(1.5)
+            magon((False))
+            up(True)
+        else:
+            up(True)
+            s0.goTo(9350)
+            up(False)
+            sleep(1.5)
+            magon((True))
+            up(True)
+            sleep(2)
+            s0.goTo(7394)
+            sleep(.5)
+            up(False)
+            sleep(3)
+            magon((False))
+            up(True)
+
+        self.opfreeze = False
+
+    def autobeepboopbeep(self):
+        print("beepboopbeep")
+        self.opfreeze = True
+        s0.goHome()
+        s0.relative_move(-5)
+        sleep(.1)
+        self.magstat = False
+        sleep(1)
+        s0.relative_move(5)
+        magon(False)
+        self.opfreeze = False
 
     def magnet(self):
         if self.magnet_button.text == "magnet on":
@@ -113,8 +165,8 @@ class MainScreen(Screen):
 
 
     def updown(self):
-        self.upstat = not self.upstat
-        if self.upstat:
+        self.ifup = not self.ifup
+        if self.ifup:
             self.upbtn.text = "Up"
         else:
             self.upbtn.text = "Down"
@@ -122,7 +174,7 @@ class MainScreen(Screen):
     def shutdown(self):
         self.magstat = False  # status of the magnet
         self.opfreeze = False
-        self.upstat = True
+        self.ifup = True
         magon(False)
         up(True)
         s0.goTo(0)
