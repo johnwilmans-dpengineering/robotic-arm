@@ -108,9 +108,9 @@ class MainScreen(Screen):
 
     def autobeepboop(self):
         self.opfreeze = True
-        print("beepboop")
+        print((cyprus.read_gpio() & 0b0001))
 
-        if not (cyprus.read_gpio() & 0b0001) == 1:  # binary bitwise AND of the value returned from read.gpio()
+        if not ((cyprus.read_gpio() & 0b0001) == 1):  # binary bitwise AND of the value returned from read.gpio()
 
             up(True)
             s0.goTo(7394)
@@ -128,13 +128,14 @@ class MainScreen(Screen):
         else:
             up(True)
             s0.goTo(9350)
-            up(False)
             sleep(1.5)
+            up(False)
+            sleep(1)
             magon((True))
             up(True)
             sleep(2)
             s0.goTo(7394)
-            sleep(.5)
+            sleep(2)
             up(False)
             sleep(3)
             magon((False))
@@ -173,7 +174,7 @@ class MainScreen(Screen):
 
     def shutdown(self):
         self.magstat = False  # status of the magnet
-        self.opfreeze = False
+        self.opfreeze = True
         self.ifup = True
         magon(False)
         up(True)
