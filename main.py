@@ -63,6 +63,7 @@ class MainScreen(Screen):
     magstat = False #status of the magnet
     opfreeze = False
     upstat = True
+    position = 1
     """
     Class to handle the main screen and its associated touch events
     """
@@ -74,12 +75,14 @@ class MainScreen(Screen):
         cyprus.setup_servo(2)  # sets up P5 on the RPiMIB as a RC servo motor controller style output
 
 
-
+        print("homing")
         s0.go_until_press(0, 6400)
         s0.set_as_home()
-
+        s0.relative_move(.5)
+        sleep(3)
 
         Thread(target=self.operation_thread).start()
+
 
     def operation_thread(self):
 
@@ -89,6 +92,13 @@ class MainScreen(Screen):
 
                 magon(self.magstat)
                 up(self.upstat)
+
+                if self.leftbtn.state == "down":
+                    s0.go_until_press(0, 2000)
+                elif self.rightbtn.state == "down":
+                    s0.go_until_press(1, 2000)
+                else:
+                    s0.softStop()
 
 
 
@@ -110,13 +120,18 @@ class MainScreen(Screen):
             self.upbtn.text = "Down"
 
     def shutdown(self):
+        self.magstat = False  # status of the magnet
+        self.opfreeze = False
+        self.upstat = True
         magon(False)
+        up(True)
+        s0.goTo(0)
         s0.free_all()
         spi.close()
         cyprus.close()
         GPIO.cleanup()
 
-        sapdhfasoiudsaoiudyfosahdfcoiudsagfoiudsahf()
+        exit(12)
 
 
 class ProjectNameGUI(App):

@@ -2,9 +2,11 @@
 
     name: 'main'
     on_enter: root.start()
-
+    leftbtn: leftbtn
+    rightbtn: rightbtn
     magnet_button: magnet_button
     upbtn: upbtn
+    pos_label: pos_label
     FloatLayout:
         size_hint: 1, 1
 
@@ -53,3 +55,16 @@
         x: 400
         y: 500
         color: 0, 1, 0, 1
+
+
+    Label:
+        id: pos_label
+        size_hint: None, None
+        text: "0"
+        font_size: 30
+        center_x: root.width * 0.5
+        center_y: root.height * 0.45
+        color: 1, 1, 1, 1
+        bold: True
+        outline_width: self.font_size * 0.1
+        outline_color: 0, 0, 0
